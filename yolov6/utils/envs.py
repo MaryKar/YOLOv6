@@ -29,7 +29,7 @@ def select_device(device):
         LOGGER.info('Using CPU for training... ')
     elif device:
         os.environ['CUDA_VISIBLE_DEVICES'] = device
-        assert torch.cuda.is_available()
+        # assert torch.cuda.is_available()
         nd = len(device.strip().split(','))
         LOGGER.info(f'Using {nd} GPU for training... ')
     cuda = device != 'cpu' and torch.cuda.is_available()

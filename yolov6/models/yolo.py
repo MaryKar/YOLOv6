@@ -97,12 +97,12 @@ def build_network(config, channels, num_classes, num_layers, fuse_ab=False, dist
         )
     else:
         backbone = BACKBONE(
-            in_channels=channels,
-            channels_list=channels_list,
-            num_repeats=num_repeat,
-            block=block,
-            fuse_P2=fuse_P2,
-            cspsppf=cspsppf
+            # in_channels=channels,
+            # # channels_list=channels_list,
+            # # num_repeats=num_repeat,
+            # block=block,
+            # fuse_P2=fuse_P2,
+            # cspsppf=cspsppf
         )
 
         neck = NECK(

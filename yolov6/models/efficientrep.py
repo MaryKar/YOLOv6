@@ -2,7 +2,7 @@ from pickle import FALSE
 from torch import nn
 from yolov6.layers.common import BottleRep, RepVGGBlock, RepBlock, BepC3, SimSPPF, SPPF, SimCSPSPPF, CSPSPPF, ConvBNSiLU, \
                                 MBLABlock, ConvBNHS, Lite_EffiBlockS2, Lite_EffiBlockS1
-
+from torch.hub import load
 
 class EfficientRep(nn.Module):
     '''EfficientRep Backbone
@@ -580,3 +580,42 @@ class Lite_EffiBackbone(nn.Module):
                             stride=1)
             block_list.add_module(str(i), block)
         return block_list
+
+
+def get_features(name):
+    def hook(model, input, output):
+        outputs[name] = output.detach()
+
+    return hook
+class GPUNet_EffiBackbone(nn.Module):
+    def __init__(self,
+                #  in_channels,
+                #  mid_channels,
+                #  out_channels,
+                #  num_repeat=[1, 3, 7, 3]
+
+    ):
+        super().__init__()
+        model_type = "GPUNet-0" # select one from above
+        precision = "fp32"
+        self.gpunet = load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_gpunet', pretrained=True, model_type=model_type, model_math=precision)
+
+        self.gpunet = load('./Models/gpunet.pth','gpunet')
+
+        mds = list(self.gpunet.modules())
+        c3 = mds[79]
+        c4 = mds[93]
+
+        c3.register_forward_hook(get_features("c3"))
+        c4.register_forward_hook(get_features("c4"))
+
+
+    def forward(self, x):
+        outputs = []
+        features = {}
+        c5 = self.gpunet(x)
+        outputs.append(features["c3"].cpu().numpy())
+        outputs.append(features["c4"].cpu().numpy())
+        outputs.append(c5)
+        return tuple(outputs)
+
