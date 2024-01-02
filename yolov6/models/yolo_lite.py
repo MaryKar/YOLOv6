@@ -66,10 +66,12 @@ def build_network(config, in_channels, num_classes):
     in_channels_neck = [make_divisible(i * width_mul)
                        for i in in_channels_neck]
 
-    backbone = BACKBONE(in_channels,
-                        mid_channels_backbone,
-                        out_channels_backbone,
-                        num_repeat=num_repeat_backbone)
+    backbone = BACKBONE(
+                        # in_channels,
+                        # mid_channels_backbone,
+                        # out_channels_backbone,
+                        # num_repeat=num_repeat_backbone
+                        )
     neck = NECK(in_channels_neck, unified_channels_neck)
     head_layers = build_effidehead_layer(in_channels_head, 1, num_classes, num_layers)
     head = Detect(num_classes, num_layers, head_layers=head_layers)

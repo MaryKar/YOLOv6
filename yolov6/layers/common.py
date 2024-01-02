@@ -63,7 +63,6 @@ class ConvBNReLU(nn.Module):
     def forward(self, x):
         return self.block(x)
 
-
 class ConvBNSiLU(nn.Module):
     '''Conv and BN with SiLU activation'''
     def __init__(self, in_channels, out_channels, kernel_size=3, stride=1, padding=None, groups=1, bias=False):
@@ -712,9 +711,11 @@ class BiFusion(nn.Module):
         )
 
     def forward(self, x):
+       
         x0 = self.upsample(x[0])
         x1 = self.cv1(x[1])
         x2 = self.downsample(self.cv2(x[2]))
+
         return self.cv3(torch.cat((x0, x1, x2), dim=1))
 
 

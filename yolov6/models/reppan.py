@@ -763,16 +763,17 @@ class CSPRepBiFPANNeck(nn.Module):
     def forward(self, input):
 
         (x3, x2, x1, x0) = input
+        print("x2" ,x2.shape)
 
-        fpn_out0 = self.reduce_layer0(x0)
+        fpn_out0 = self.reduce_layer0(x0) #c/2      c    c
         f_concat_layer0 = self.Bifusion0([fpn_out0, x1, x2])
         f_out0 = self.Rep_p4(f_concat_layer0)
 
-        fpn_out1 = self.reduce_layer1(f_out0)
+        fpn_out1 = self.reduce_layer1(f_out0) #c
         f_concat_layer1 = self.Bifusion1([fpn_out1, x2, x3])
         pan_out2 = self.Rep_p3(f_concat_layer1)
 
-        down_feat1 = self.downsample2(pan_out2)
+        down_feat1 = self.downsample2(pan_out2) 
         p_concat_layer1 = torch.cat([down_feat1, fpn_out1], 1)
         pan_out1 = self.Rep_n3(p_concat_layer1)
 
@@ -1194,9 +1195,10 @@ class Lite_EffiNeck(nn.Module):
         )
 
     def forward(self, input):
+        ## neck torch.Size([1, 96, 80, 80]) torch.Size([1, 192, 40, 40]) torch.Size([1, 384, 20, 20])
 
         (x2, x1, x0) = input
-
+        # print("neck" , x2.shape , x1.shape , x0.shape)
         fpn_out0 = self.reduce_layer0(x0) #c5
         x1 = self.reduce_layer1(x1)       #c4
         x2 = self.reduce_layer2(x2)       #c3
@@ -1219,7 +1221,6 @@ class Lite_EffiNeck(nn.Module):
 
         top_features = self.p6_conv_1(fpn_out0)
         pan_out0 = top_features + self.p6_conv_2(pan_out1)  #p6
-
 
         outputs = [pan_out3, pan_out2, pan_out1, pan_out0]
 
