@@ -134,6 +134,7 @@ class Trainer:
             for self.step, self.batch_data in self.pbar:
                 self.train_in_steps(epoch_num, self.step)
                 self.print_details()
+            
         except Exception as _:
             LOGGER.error('ERROR in training steps.')
             raise
@@ -174,7 +175,7 @@ class Trainer:
         self.scaler.scale(total_loss).backward()
         self.loss_items = loss_items
         self.update_optimizer()
-
+        
     def after_epoch(self):
         lrs_of_this_epoch = [x['lr'] for x in self.optimizer.param_groups]
         self.scheduler.step() # update lr
